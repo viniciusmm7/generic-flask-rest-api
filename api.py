@@ -2,15 +2,67 @@
 from os import getenv
 from flask import Flask, request, jsonify
 import mysql.connector
+import boto3
+import logging
+import time
+from botocore.exceptions import ClientError, NoCredentialsError
 
+
+def get_secret():
+    secret_name = "api/mysql/credentials"
+    region_name = "us-east-1"
+    
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+    
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        raise e
+    
+    return eval(get_secret_value_response['SecretString'])
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+
+try:
+    log_client = boto3.client('logs', region_name='us-east-1')
+except NoCredentialsError:
+    logger.error('AWS credentials not found. Please configure credentials.')
+    
+LOG_GROUP = '/flask-app-vmm/logs'
+LOG_STREAM = getenv('INSTANCE_ID')
+
+async def push_logs_to_cloudwatch(log_message):
+    try:
+        log_client.put_log_events(
+            logGroupName=LOG_GROUP,
+            logStreamName=LOG_STREAM,
+            logEvents=[
+                {
+                    'timestamp': int(round(time.time() * 1000)),
+                    'message': log_message
+                },
+            ],
+        )
+        
+    except Exception as e:
+        logger.error(f'Error sending logs to CloudWatch: {e}')
 
 app = Flask(__name__)
 
+secret = get_secret()
+
 db_config = {
     "host": getenv("DB_HOST"),
-    "user": getenv("DB_USER"),
-    "password": getenv("DB_PASSWORD"),
-    "database": getenv("DB_NAME"),
+    "user": secret['username'],
+    "password": secret['password'],
+    "database": secret['name'],
 }
 
 conn = mysql.connector.connect(**db_config)
@@ -39,7 +91,7 @@ def add_mock_data():
 
 @app.route("/", methods=["GET"])
 def get_index():
-    return jsonify({"message": "Hello, World!"})
+    return jsonify({"message": "Connected successfully!"})
 
 @app.route("/users", methods=["GET"])
 def get_users():
