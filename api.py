@@ -37,6 +37,10 @@ def add_mock_data():
         """
     )
 
+@app.route("/", methods=["GET"])
+def get_index():
+    return jsonify({"message": "Hello, World!"})
+
 @app.route("/users", methods=["GET"])
 def get_users():
     cursor.execute("SELECT * FROM users")
