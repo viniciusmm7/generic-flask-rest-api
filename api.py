@@ -27,6 +27,16 @@ def create_users_table():
         """
     )
 
+def add_mock_data():
+    cursor.execute(
+        """
+        INSERT INTO users (name, email) VALUES
+            ("John Doe", "johndoe@email.com"),
+            ("Jane Doe", "janedoe@email.com"),
+            ("John Smith", "johnsmith@email.com")
+        """
+    )
+
 @app.route("/users", methods=["GET"])
 def get_users():
     cursor.execute("SELECT * FROM users")
@@ -64,4 +74,5 @@ def delete_user(user_id):
 
 if __name__ == "__main__":
     create_users_table()
+    add_mock_data()
     app.run(debug=True)
