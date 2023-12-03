@@ -1,14 +1,15 @@
 #!/usr/bin/env python
+from os import getenv
 from flask import Flask, request, jsonify
 import mysql.connector
 
 
 app = Flask(__name__)
 db_config = {
-    "host": "localhost",
-    "user": "admin",
-    "password": "12345678",
-    "database": "vmm",
+    "host": getenv("DB_HOST"),
+    "user": getenv("DB_USER"),
+    "password": getenv("DB_PASSWORD"),
+    "database": getenv("DB_NAME"),
 }
 
 conn = mysql.connector.connect(**db_config)
