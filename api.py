@@ -5,6 +5,7 @@ import mysql.connector
 
 
 app = Flask(__name__)
+
 db_config = {
     "host": getenv("DB_HOST"),
     "user": getenv("DB_USER"),
@@ -14,6 +15,17 @@ db_config = {
 
 conn = mysql.connector.connect(**db_config)
 cursor = conn.cursor()
+
+def create_users_table():
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255),
+            email VARCHAR(255)
+        )
+        """
+    )
 
 @app.route("/users", methods=["GET"])
 def get_users():
@@ -51,4 +63,5 @@ def delete_user(user_id):
     return jsonify({"message": "User deleted successfully"})
 
 if __name__ == "__main__":
+    create_users_table()
     app.run(debug=True)
