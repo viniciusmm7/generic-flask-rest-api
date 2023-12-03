@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from os import getenv
 from flask import Flask, request, jsonify
 import mysql.connector
