@@ -65,13 +65,6 @@ db_config = {
     "database": secret['name'],
 }
 
-# db_config = {
-#     'host': 'localhost',
-#     'user': 'root',
-#     'password': '12345678',
-#     'database': 'vmm'
-# }
-
 conn = mysql.connector.connect(**db_config)
 cursor = conn.cursor()
 
