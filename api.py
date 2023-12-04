@@ -65,7 +65,13 @@ db_config = {
     "database": secret['name'],
 }
 
-conn = mysql.connector.connect(**db_config)
+try:
+    conn = mysql.connector.connect(**db_config)
+except mysql.connector.Error as err:
+    logger.error(f"Error connecting to database: {err}")
+    push_logs_to_cloudwatch(f"Error connecting to database: {err}")
+    exit(1)
+    
 cursor = conn.cursor()
 
 def create_users_table():
