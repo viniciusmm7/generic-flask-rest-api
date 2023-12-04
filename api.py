@@ -9,7 +9,7 @@ from botocore.exceptions import ClientError, NoCredentialsError
 
 
 def get_secret():
-    secret_name = "api/mysql/credentials"
+    secret_name = "prod/beta/mysql/vmm_credentials"
     region_name = "us-east-1"
     
     session = boto3.session.Session()
