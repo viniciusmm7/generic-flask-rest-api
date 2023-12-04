@@ -65,6 +65,13 @@ db_config = {
     "database": secret['name'],
 }
 
+# db_config = {
+#     'host': 'localhost',
+#     'user': 'root',
+#     'password': '12345678',
+#     'database': 'vmm'
+# }
+
 conn = mysql.connector.connect(**db_config)
 cursor = conn.cursor()
 
@@ -100,7 +107,7 @@ def get_users():
     return jsonify({"users": users})
 
 @app.route("/users/<int:user_id>", methods=["GET"])
-def get_users(user_id):
+def get_user(user_id):
     cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
     if user:
