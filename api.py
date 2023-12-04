@@ -137,4 +137,4 @@ def delete_user(user_id):
 if __name__ == "__main__":
     create_users_table()
     add_mock_data()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)
